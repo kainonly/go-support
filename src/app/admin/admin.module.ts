@@ -12,6 +12,13 @@ const routes: Routes = [
     component: AdminComponent,
     children: [
       {
+        path: 'dashboard',
+        loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule),
+        data: {
+          breadcrumb: `Dashboard`
+        }
+      },
+      {
         path: 'datasets',
         loadChildren: () => import('./datasets/datasets.module').then(m => m.DatasetsModule),
         data: {
