@@ -19,6 +19,13 @@ const routes: Routes = [
         }
       },
       {
+        path: 'properties',
+        loadChildren: () => import('./properties/properties.module').then(m => m.PropertiesModule),
+        data: {
+          breadcrumb: `Dashboard`
+        }
+      },
+      {
         path: 'datasets',
         loadChildren: () => import('./datasets/datasets.module').then(m => m.DatasetsModule),
         data: {
