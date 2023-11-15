@@ -53,7 +53,7 @@ const routes: Routes = [
           breadcrumb: `Setting`
         }
       },
-      { path: '', redirectTo: 'datasets', pathMatch: 'full' }
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   }
 ];
