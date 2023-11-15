@@ -1,0 +1,32 @@
+<ng-template #coverTemplate>
+  <img alt="" src="/assets/unsplash_D_4R9CcYZOk.png" />
+</ng-template>
+
+<div style="padding: 16px">
+  <nz-row [nzGutter]="[16, 16]">
+    <nz-col [nzSpan]="6">
+      <nz-card style="border-radius: 16px" [nzCover]="coverTemplate">
+        <nz-card-meta nzTitle="Boston family home" [nzDescription]="descriptionRef"> </nz-card-meta>
+        <ng-template #descriptionRef>
+          <p>A beautiful townhouse in the heart of Miami’s down town district. With 3 bedrooms and a heated pool.</p>
+          <button nz-button nzType="default" nzBlock>View Listing Details</button>
+        </ng-template>
+      </nz-card>
+    </nz-col>
+    <nz-col [nzSpan]="6">
+      <nz-card [nzCover]="coverTemplate">
+        <nz-card-meta nzTitle="Card title" nzDescription="This is the description"></nz-card-meta>
+      </nz-card>
+    </nz-col>
+    <nz-col [nzSpan]="6">
+      <nz-card [nzCover]="coverTemplate">
+        <nz-card-meta nzTitle="Card title" nzDescription="This is the description"></nz-card-meta>
+      </nz-card>
+    </nz-col>
+    <nz-col [nzSpan]="6">
+      <nz-card [nzCover]="coverTemplate">
+        <nz-card-meta nzTitle="Card title" nzDescription="This is the description"></nz-card-meta>
+      </nz-card>
+    </nz-col>
+  </nz-row>
+</div>
