@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "hotel-sys": {
+    "example-sys": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/hotel-sys",
+            "outputPath": "dist/example-sys",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -65,10 +65,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "hotel-sys:build:production"
+              "browserTarget": "example-sys:build:production"
             },
             "development": {
-              "browserTarget": "hotel-sys:build:development"
+              "browserTarget": "example-sys:build:development"
             }
           },
           "options": {
@@ -83,7 +83,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "hotel-sys:build"
+            "browserTarget": "example-sys:build"
           }
         },
         "test": {
