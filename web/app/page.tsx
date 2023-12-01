@@ -1,4 +1,4 @@
-import styles from './page.module.less';
+import styles from './page.module.css';
 
 export default async function Index() {
   /*
