@@ -15,7 +15,6 @@
         "main": "server/src/main.ts",
         "tsConfig": "server/tsconfig.app.json",
         "assets": ["server/src/assets"],
-        "isolatedConfig": true,
         "webpackConfig": "server/webpack.config.js"
       },
       "configurations": {
@@ -40,10 +39,7 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["server/**/*.ts"]
-      }
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",

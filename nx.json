@@ -15,8 +15,9 @@
         "{workspaceRoot}/eslint.config.js"
       ]
     },
-    "e2e": {
-      "cache": true
+    "@nx/vite:test": {
+      "cache": true,
+      "inputs": ["default", "^default"]
     },
     "@nx/jest:jest": {
       "cache": true,
@@ -32,29 +33,20 @@
       }
     }
   },
-  "nxCloudAccessToken": "ZGM5MThiMGQtNzc4ZS00NDg1LWI1MTAtNmU5YzUyOGM5MzAxfHJlYWQtd3JpdGU=",
+  "nxCloudAccessToken": "OTY0ODRhNjItNjFmYi00OTg5LWJjNjUtMTA0ODI1ZGJmMGZlfHJlYWQtd3JpdGU=",
   "generators": {
-    "@nx/angular:application": {
-      "style": "less",
-      "linter": "eslint",
-      "unitTestRunner": "jest",
-      "e2eTestRunner": "none"
-    },
-    "@nx/angular:library": {
-      "linter": "eslint",
-      "unitTestRunner": "jest"
-    },
-    "@nx/angular:component": {
-      "style": "less"
-    },
     "@nx/react": {
       "application": {
+        "style": "css",
+        "linter": "eslint",
+        "bundler": "vite",
         "babel": true
-      }
-    },
-    "@nx/next": {
-      "application": {
-        "style": "less",
+      },
+      "component": {
+        "style": "css"
+      },
+      "library": {
+        "style": "css",
         "linter": "eslint"
       }
     }
