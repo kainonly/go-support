@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
+import { Claims } from './types';
+
 @Injectable()
 export class AppService {
-  getData(): { message: string } {
-    return { message: 'Hello API' };
+  async verify({ jti }: any): Promise<Claims> {
+    return { jti };
   }
 }
