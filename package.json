@@ -17,6 +17,7 @@
     "@nestjs/mongoose": "^10.0.2",
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-fastify": "^10.3.0",
+    "@node-rs/argon2": "^1.7.2",
     "@swc/helpers": "~0.5.2",
     "axios": "^1.0.0",
     "class-transformer": "^0.5.1",
