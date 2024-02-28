@@ -18,13 +18,7 @@
               }
             ]
           }
-        ]
-      }
-    },
-    {
-      "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nx/typescript"],
-      "rules": {
+        ],
         "import/no-duplicates": "error",
         "import/no-unused-modules": "error",
         "import/no-unassigned-import": "error",
@@ -36,10 +30,15 @@
               "caseInsensitive": false
             },
             "newlines-between": "always",
-            "groups": ["external", "builtin", "internal", ["parent", "sibling", "index"]],
+            "groups": [
+              "external",
+              "builtin",
+              "internal",
+              ["parent", "sibling", "index"]
+            ],
             "pathGroups": [
               {
-                "pattern": "{@nestjs/**}",
+                "pattern": "{@nestjs/**,@angular/**,rxjs,rxjs/operators}",
                 "group": "external",
                 "position": "before"
               }
@@ -50,8 +49,20 @@
       }
     },
     {
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:@nx/typescript"],
+      "rules": {}
+    },
+    {
       "files": ["*.js", "*.jsx"],
       "extends": ["plugin:@nx/javascript"],
+      "rules": {}
+    },
+    {
+      "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
+      "env": {
+        "jest": true
+      },
       "rules": {}
     }
   ]
