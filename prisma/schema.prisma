@@ -10,47 +10,54 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  status    Boolean  @default(true)
-  email     String   @unique @db.VarChar
-  password  String   @db.VarChar
-  name      String?  @db.VarChar
-  roles     Int[]
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
+  email      String   @unique @db.VarChar
+  password   String   @db.VarChar
+  name       String?  @db.VarChar
+  roles      Int[]
+
+  @@map("user")
 }
 
 model Role {
   id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
   status      Boolean  @default(true)
   name        String   @db.VarChar
   permissions Json     @default("{}")
+
+  @@map("role")
 }
 
 model Project {
-  id        Int        @id @default(autoincrement())
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  status    Boolean    @default(true)
-  name      String     @db.VarChar
-  tags      Tag[]
-  workflows Workflow[]
+  id         Int        @id @default(autoincrement())
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  status     Boolean    @default(true)
+  name       String     @db.VarChar
+  tags       Tag[]
+  workflows  Workflow[]
+
+  @@map("project")
 }
 
 model Tag {
-  id        Int             @id @default(autoincrement())
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
-  status    Boolean         @default(true)
-  projectId Int
-  workflows TagOnWorkflow[]
-  name      String          @db.VarChar
+  id         Int             @id @default(autoincrement())
+  created_at DateTime        @default(now())
+  updated_at DateTime        @updatedAt
+  status     Boolean         @default(true)
+  project_id Int
+  workflows  TagOnWorkflow[]
+  name       String          @db.VarChar
 
-  Project Project? @relation(fields: [projectId], references: [id])
+  Project Project? @relation(fields: [project_id], references: [id])
 
-  @@index([projectId])
+  @@index([project_id])
+  @@map("tag")
 }
 
 enum EventKind {
@@ -58,39 +65,43 @@ enum EventKind {
 }
 
 model Endpoint {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  status    Boolean   @default(true)
-  name      String    @db.VarChar
-  kind      EventKind
-  option    Json      @default("{}")
+  id         Int       @id @default(autoincrement())
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  status     Boolean   @default(true)
+  name       String    @db.VarChar
+  kind       EventKind
+  option     Json      @default("{}")
+
+  @@map("endpoint")
 }
 
 model Workflow {
-  id        Int             @id @default(autoincrement())
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
-  status    Boolean         @default(true)
-  projectId Int
-  name      String          @db.VarChar
-  kind      EventKind
-  metadata  Json            @default("{}")
-  tags      TagOnWorkflow[]
+  id         Int             @id @default(autoincrement())
+  created_at DateTime        @default(now())
+  updated_at DateTime        @updatedAt
+  status     Boolean         @default(true)
+  project_id Int
+  name       String          @db.VarChar
+  kind       EventKind
+  metadata   Json            @default("{}")
+  tags       TagOnWorkflow[]
 
-  Project Project @relation(fields: [projectId], references: [id])
+  Project Project @relation(fields: [project_id], references: [id])
 
-  @@index([projectId])
+  @@index([project_id])
+  @@map("workflow")
 }
 
 model TagOnWorkflow {
-  tagId      Int
-  workflowId Int
+  tag_id      Int
+  workflow_id Int
 
-  Tag      Tag      @relation(fields: [tagId], references: [id])
-  Workflow Workflow @relation(fields: [workflowId], references: [id])
+  Tag      Tag      @relation(fields: [tag_id], references: [id])
+  Workflow Workflow @relation(fields: [workflow_id], references: [id])
 
-  @@id([tagId, workflowId])
-  @@index([tagId])
-  @@index([workflowId])
+  @@id([tag_id, workflow_id])
+  @@index([tag_id])
+  @@index([workflow_id])
+  @@map("tag_on_workflow")
 }
