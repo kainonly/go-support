@@ -1,12 +1,9 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
+# OS
+.DS_Store
 
-# compiled output
-dist
-tmp
-/out-tsc
-
-# dependencies
-node_modules
+# Tests
+/coverage
+/.nyc_output
 
 # IDEs and editors
 /.idea
@@ -24,21 +21,4 @@ node_modules
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# misc
-/.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
-npm-debug.log
-yarn-error.log
-testem.log
-/typings
-
-# System Files
-.DS_Store
-Thumbs.db
-
-.nx/cache
-
-.angular
-.env
+/vendor
