@@ -13,7 +13,7 @@ import (
 	"github.com/nats-io/nkeys"
 	"github.com/weplanx/go/cipher"
 	"github.com/weplanx/go/help"
-	"github.com/weplanx/sup/values"
+	"github.com/weplanx/support/values"
 	"log"
 	"net/url"
 	"os"

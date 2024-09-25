@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/weplanx/go/help"
 	"github.com/weplanx/go/passlib"
-	"github.com/weplanx/sup/rest"
+	"github.com/weplanx/support/rest"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
