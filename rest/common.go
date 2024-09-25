@@ -5,7 +5,7 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/redis/go-redis/v9"
 	"github.com/weplanx/go/cipher"
-	"github.com/weplanx/sup/values"
+	"github.com/weplanx/support/values"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 

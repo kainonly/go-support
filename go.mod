@@ -1,4 +1,4 @@
-module github.com/weplanx/sup
+module github.com/weplanx/support
 
 go 1.23
 

@@ -2,7 +2,7 @@ package sessions
 
 import (
 	"github.com/redis/go-redis/v9"
-	"github.com/weplanx/sup/values"
+	"github.com/weplanx/support/values"
 )
 
 func New(options ...Option) *Service {
