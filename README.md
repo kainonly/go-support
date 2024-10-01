@@ -1,4 +1,4 @@
-# Weplanx 
+# Weplanx Support
 
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/weplanx/support/testing.yml?style=flat-square)](https://github.com/weplanx/support/actions/workflows/testing.yml)
 [![Coveralls github](https://img.shields.io/coveralls/github/weplanx/support.svg?style=flat-square)](https://coveralls.io/github/weplanx/support)

@@ -39,7 +39,9 @@ func (x *Service) Sync(v interface{}, update chan interface{}) (err error) {
 	}
 	current := time.Now()
 	var watch nats.KeyWatcher
-	watch, err = x.KeyValue.Watch("values")
+	if watch, err = x.KeyValue.Watch("values"); err != nil {
+		return
+	}
 	for entry := range watch.Updates() {
 		if entry == nil || entry.Created().Unix() < current.Unix() {
 			continue
