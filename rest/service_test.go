@@ -140,7 +140,7 @@ func MockStream(ctx context.Context) (err error) {
 			name := fmt.Sprintf(`EVENT_%s`, k)
 			subject := fmt.Sprintf(`events.%s`, k)
 			js.DeleteStream(name)
-			if _, err := js.AddStream(&nats.StreamConfig{
+			if _, err = js.AddStream(&nats.StreamConfig{
 				Name:      name,
 				Subjects:  []string{subject},
 				Retention: nats.WorkQueuePolicy,
