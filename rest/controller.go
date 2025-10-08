@@ -39,7 +39,7 @@ func (x *Controller) Create(ctx context.Context, c *app.RequestContext) {
 	}
 
 	if err := x.Service.Transform(dto.Data, dto.Xdata); err != nil {
-		c.Error(help.E("rest.transform", err.Error()))
+		c.Error(help.E(1000, err.Error()))
 		return
 	}
 	dto.Data["create_time"] = time.Now()
