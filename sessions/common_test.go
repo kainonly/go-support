@@ -2,6 +2,12 @@ package sessions_test
 
 import (
 	"bytes"
+	"log"
+	"net/url"
+	"os"
+	"testing"
+	"time"
+
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/config"
@@ -9,15 +15,10 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol"
 	"github.com/cloudwego/hertz/pkg/route"
 	"github.com/hertz-contrib/requestid"
+	"github.com/kainonly/go/help"
+	"github.com/kainonly/support/sessions"
+	"github.com/kainonly/support/values"
 	"github.com/redis/go-redis/v9"
-	"github.com/weplanx/go/help"
-	"github.com/weplanx/support/sessions"
-	"github.com/weplanx/support/values"
-	"log"
-	"net/url"
-	"os"
-	"testing"
-	"time"
 )
 
 var (
@@ -55,7 +56,7 @@ func TestMain(m *testing.M) {
 	}))
 	engine.Use(
 		requestid.New(),
-		help.EHandler(),
+		help.ErrorHandler(),
 	)
 	controller := &sessions.Controller{Service: service}
 	r := engine.Group("sessions")
