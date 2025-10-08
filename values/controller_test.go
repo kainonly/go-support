@@ -2,10 +2,11 @@ package values_test
 
 import (
 	"fmt"
-	"github.com/bytedance/sonic"
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/bytedance/sonic"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSetBadValidate(t *testing.T) {

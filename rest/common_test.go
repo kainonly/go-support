@@ -3,6 +3,11 @@ package rest_test
 import (
 	"bytes"
 	"context"
+	"net/url"
+	"os"
+	"testing"
+	"time"
+
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/config"
@@ -10,21 +15,17 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol"
 	"github.com/cloudwego/hertz/pkg/route"
 	"github.com/hertz-contrib/requestid"
+	"github.com/kainonly/go/cipher"
+	"github.com/kainonly/go/help"
+	"github.com/kainonly/support/rest"
+	"github.com/kainonly/support/values"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nkeys"
 	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
-	"github.com/weplanx/go/cipher"
-	"github.com/weplanx/go/help"
-	"github.com/weplanx/support/rest"
-	"github.com/weplanx/support/values"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/writeconcern"
-	"net/url"
-	"os"
-	"testing"
-	"time"
 )
 
 var (
@@ -113,7 +114,7 @@ func TestMain(m *testing.M) {
 	}))
 	engine.Use(
 		requestid.New(),
-		help.EHandler(),
+		help.ErrorHandler(),
 	)
 	controller := &rest.Controller{Service: service}
 	r := engine.Group(":collection")

@@ -2,6 +2,13 @@ package values_test
 
 import (
 	"bytes"
+	"log"
+	"net/url"
+	"os"
+	"reflect"
+	"testing"
+	"time"
+
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/config"
@@ -9,17 +16,11 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol"
 	"github.com/cloudwego/hertz/pkg/route"
 	"github.com/hertz-contrib/requestid"
+	"github.com/kainonly/go/cipher"
+	"github.com/kainonly/go/help"
+	"github.com/kainonly/support/values"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nkeys"
-	"github.com/weplanx/go/cipher"
-	"github.com/weplanx/go/help"
-	"github.com/weplanx/support/values"
-	"log"
-	"net/url"
-	"os"
-	"reflect"
-	"testing"
-	"time"
 )
 
 type M = map[string]interface{}
@@ -63,7 +64,7 @@ func TestMain(m *testing.M) {
 	}))
 	engine.Use(
 		requestid.New(),
-		help.EHandler(),
+		help.ErrorHandler(),
 	)
 	controller := &values.Controller{Service: service}
 	r := engine.Group("values")

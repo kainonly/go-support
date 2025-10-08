@@ -1,12 +1,13 @@
 package values_test
 
 import (
-	"github.com/nats-io/nats.go"
-	"github.com/stretchr/testify/assert"
-	"github.com/weplanx/support/values"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/kainonly/support/values"
+	"github.com/nats-io/nats.go"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestService_Fetch(t *testing.T) {
