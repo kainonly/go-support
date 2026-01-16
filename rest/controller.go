@@ -15,10 +15,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Controller handles RESTful API requests.
 type Controller struct {
 	*Service
 }
 
+// CreateDto defines the data structure for creating a document.
 type CreateDto struct {
 	Collection string `path:"collection" vd:"snake"`
 	Data       M      `json:"data" vd:"gt=0"`
@@ -26,6 +28,8 @@ type CreateDto struct {
 	Txn        string `json:"txn，omitempty" vd:"omitempty,uuid"`
 }
 
+// Create handles the creation of a single document.
+// It supports transactions if a txn ID is provided.
 func (x *Controller) Create(ctx context.Context, c *app.RequestContext) {
 	var dto CreateDto
 	if err := c.BindAndValidate(&dto); err != nil {
@@ -68,6 +72,7 @@ func (x *Controller) Create(ctx context.Context, c *app.RequestContext) {
 	c.JSON(201, r)
 }
 
+// BulkCreateDto defines the data structure for creating multiple documents.
 type BulkCreateDto struct {
 	Collection string `path:"collection" vd:"snake"`
 	Data       []M    `json:"data" vd:"gt=0"`
@@ -75,6 +80,8 @@ type BulkCreateDto struct {
 	Txn        string `json:"txn,omitempty" vd:"omitempty,uuid"`
 }
 
+// BulkCreate handles the creation of multiple documents in a batch.
+// It supports transactions if a txn ID is provided.
 func (x *Controller) BulkCreate(ctx context.Context, c *app.RequestContext) {
 	var dto BulkCreateDto
 	if err := c.BindAndValidate(&dto); err != nil {
@@ -121,12 +128,14 @@ func (x *Controller) BulkCreate(ctx context.Context, c *app.RequestContext) {
 	c.JSON(201, r)
 }
 
+// SizeDto defines the data structure for counting documents.
 type SizeDto struct {
 	Collection string `path:"collection" vd:"snake"`
 	Filter     M      `json:"filter" vd:"required"`
 	Xfilter    M      `json:"xfilter,omitempty"`
 }
 
+// Size returns the count of documents matching the filter.
 func (x *Controller) Size(ctx context.Context, c *app.RequestContext) {
 	var dto SizeDto
 	if err := c.BindAndValidate(&dto); err != nil {
@@ -154,6 +163,7 @@ func (x *Controller) Size(ctx context.Context, c *app.RequestContext) {
 	c.Status(204)
 }
 
+// FindDto defines the data structure for querying documents.
 type FindDto struct {
 	Collection string   `path:"collection" vd:"snake"`
 	Pagesize   int64    `header:"x-pagesize" vd:"omitempty,min=0,max=1000"`
@@ -164,6 +174,8 @@ type FindDto struct {
 	Keys       []string `query:"keys,omitempty"`
 }
 
+// Find retrieves a list of documents matching the filter.
+// It supports pagination, sorting, and field selection.
 func (x *Controller) Find(ctx context.Context, c *app.RequestContext) {
 	var dto FindDto
 	if err := c.BindAndValidate(&dto); err != nil {
@@ -223,6 +235,7 @@ func (x *Controller) Find(ctx context.Context, c *app.RequestContext) {
 	c.JSON(200, data)
 }
 
+// FindOneDto defines the data structure for querying a single document.
 type FindOneDto struct {
 	Collection string   `path:"collection" vd:"snake"`
 	Filter     M        `json:"filter" vd:"gt=0"`
@@ -230,6 +243,7 @@ type FindOneDto struct {
 	Keys       []string `query:"keys,omitempty"`
 }
 
+// FindOne retrieves a single document matching the filter.
 func (x *Controller) FindOne(ctx context.Context, c *app.RequestContext) {
 	var dto FindOneDto
 	if err := c.BindAndValidate(&dto); err != nil {
@@ -259,12 +273,14 @@ func (x *Controller) FindOne(ctx context.Context, c *app.RequestContext) {
 	c.JSON(200, data)
 }
 
+// FindByIdDto defines the data structure for querying a document by its ID.
 type FindByIdDto struct {
 	Collection string   `path:"collection" vd:"snake"`
 	Id         string   `path:"id" vd:"mongodb"`
 	Keys       []string `query:"keys,omitempty"`
 }
 
+// FindById retrieves a single document by its ID.
 func (x *Controller) FindById(ctx context.Context, c *app.RequestContext) {
 	var dto FindByIdDto
 	if err := c.BindAndValidate(&dto); err != nil {
@@ -290,6 +306,7 @@ func (x *Controller) FindById(ctx context.Context, c *app.RequestContext) {
 	c.JSON(200, data)
 }
 
+// UpdateDto defines the data structure for updating documents.
 type UpdateDto struct {
 	Collection   string        `path:"collection" vd:"snake"`
 	Filter       M             `json:"filter" vd:"gt=0"`
@@ -300,6 +317,8 @@ type UpdateDto struct {
 	Txn          string        `json:"txn,omitempty" vd:"omitempty,uuid"`
 }
 
+// Update handles the update of multiple documents matching the filter.
+// It supports transactions if a txn ID is provided.
 func (x *Controller) Update(ctx context.Context, c *app.RequestContext) {
 	var dto UpdateDto
 	if err := c.BindAndValidate(&dto); err != nil {
@@ -353,6 +372,7 @@ func (x *Controller) Update(ctx context.Context, c *app.RequestContext) {
 	c.JSON(200, r)
 }
 
+// UpdateByIdDto defines the data structure for updating a document by its ID.
 type UpdateByIdDto struct {
 	Collection   string        `path:"collection" vd:"snake"`
 	Id           string        `path:"id" vd:"mongodb"`
@@ -362,6 +382,8 @@ type UpdateByIdDto struct {
 	Txn          string        `json:"txn,omitempty" vd:"omitempty,uuid"`
 }
 
+// UpdateById handles the update of a single document by its ID.
+// It supports transactions if a txn ID is provided.
 func (x *Controller) UpdateById(ctx context.Context, c *app.RequestContext) {
 	var dto UpdateByIdDto
 	if err := c.BindAndValidate(&dto); err != nil {
@@ -412,6 +434,7 @@ func (x *Controller) UpdateById(ctx context.Context, c *app.RequestContext) {
 	c.JSON(200, r)
 }
 
+// ReplaceDto defines the data structure for replacing a document.
 type ReplaceDto struct {
 	Collection string `path:"collection" vd:"snake"`
 	Id         string `path:"id" vd:"mongodb"`
@@ -420,6 +443,8 @@ type ReplaceDto struct {
 	Txn        string `json:"txn,omitempty" vd:"omitempty,uuid"`
 }
 
+// Replace handles the replacement of a single document by its ID.
+// It supports transactions if a txn ID is provided.
 func (x *Controller) Replace(ctx context.Context, c *app.RequestContext) {
 	var dto ReplaceDto
 	if err := c.BindAndValidate(&dto); err != nil {
@@ -464,12 +489,15 @@ func (x *Controller) Replace(ctx context.Context, c *app.RequestContext) {
 	c.JSON(200, r)
 }
 
+// DeleteDto defines the data structure for deleting a document.
 type DeleteDto struct {
 	Collection string `path:"collection" vd:"snake"`
 	Id         string `path:"id" vd:"mongodb"`
 	Txn        string `query:"txn,omitempty" vd:"omitempty,uuid"`
 }
 
+// Delete handles the deletion of a single document by its ID.
+// It supports transactions if a txn ID is provided.
 func (x *Controller) Delete(ctx context.Context, c *app.RequestContext) {
 	var dto DeleteDto
 	if err := c.BindAndValidate(&dto); err != nil {
@@ -507,6 +535,7 @@ func (x *Controller) Delete(ctx context.Context, c *app.RequestContext) {
 	c.JSON(200, r)
 }
 
+// BulkDeleteDto defines the data structure for deleting multiple documents.
 type BulkDeleteDto struct {
 	Collection string `path:"collection" vd:"snake"`
 	Filter     M      `json:"filter" vd:"gt=0"`
@@ -514,6 +543,8 @@ type BulkDeleteDto struct {
 	Txn        string `json:"txn,omitempty" vd:"omitempty,uuid"`
 }
 
+// BulkDelete handles the deletion of multiple documents matching the filter.
+// It supports transactions if a txn ID is provided.
 func (x *Controller) BulkDelete(ctx context.Context, c *app.RequestContext) {
 	var dto BulkDeleteDto
 	if err := c.BindAndValidate(&dto); err != nil {
@@ -554,17 +585,21 @@ func (x *Controller) BulkDelete(ctx context.Context, c *app.RequestContext) {
 	c.JSON(200, r)
 }
 
+// SortDto defines the data structure for sorting documents.
 type SortDto struct {
 	Collection string      `path:"collection" vd:"snake"`
 	Data       SortDtoData `json:"data" vd:"structonly"`
 	Txn        string      `json:"txn,omitempty" vd:"omitempty,uuid"`
 }
 
+// SortDtoData defines the data structure for the sorting key and values.
 type SortDtoData struct {
 	Key    string               `json:"key"  vd:"required"`
 	Values []primitive.ObjectID `json:"values"  vd:"gt=0,dive,mongodb"`
 }
 
+// Sort handles the sorting of documents based on a key and a list of IDs.
+// It supports transactions if a txn ID is provided.
 func (x *Controller) Sort(ctx context.Context, c *app.RequestContext) {
 	var dto SortDto
 	if err := c.BindAndValidate(&dto); err != nil {
@@ -600,6 +635,7 @@ func (x *Controller) Sort(ctx context.Context, c *app.RequestContext) {
 	c.Status(204)
 }
 
+// Transaction starts a new transaction and returns a transaction ID (txn).
 func (x *Controller) Transaction(ctx context.Context, c *app.RequestContext) {
 	txn := help.Uuid()
 	x.Service.Transaction(ctx, txn)
@@ -608,10 +644,12 @@ func (x *Controller) Transaction(ctx context.Context, c *app.RequestContext) {
 	})
 }
 
+// CommitDto defines the data structure for committing a transaction.
 type CommitDto struct {
 	Txn string `json:"txn" vd:"uuid"`
 }
 
+// Commit commits a pending transaction.
 func (x *Controller) Commit(ctx context.Context, c *app.RequestContext) {
 	var dto CommitDto
 	if err := c.BindAndValidate(&dto); err != nil {

@@ -8,6 +8,7 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
+// New creates a new instance of the Service with the provided options.
 func New(options ...Option) *Service {
 	x := new(Service)
 	for _, v := range options {
@@ -16,26 +17,31 @@ func New(options ...Option) *Service {
 	return x
 }
 
+// Option is a function that configures the Service.
 type Option func(x *Service)
 
+// SetKeyValue sets the NATS KeyValue store for the Service.
 func SetKeyValue(v nats.KeyValue) Option {
 	return func(x *Service) {
 		x.KeyValue = v
 	}
 }
 
+// SetCipher sets the cipher for encryption/decryption operations.
 func SetCipher(v *cipher.Cipher) Option {
 	return func(x *Service) {
 		x.Cipher = v
 	}
 }
 
+// SetType sets the reflection type for value validation/mapping.
 func SetType(v reflect.Type) Option {
 	return func(x *Service) {
 		x.Type = v
 	}
 }
 
+// DynamicValues defines the structure for dynamic configuration values.
 type DynamicValues struct {
 	// session period (seconds)
 	// User inactivity for 1 hour, session will end
@@ -116,6 +122,7 @@ type DynamicValues struct {
 	RestTxnTimeout time.Duration `yaml:"rest_txn_timeout"`
 }
 
+// RestControl defines access control rules for REST API endpoints.
 type RestControl struct {
 	Keys       []string `yaml:"keys"`
 	Sensitives []string `yaml:"sensitives"`

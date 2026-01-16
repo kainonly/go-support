@@ -10,12 +10,14 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
+// Service provides logic for managing dynamic configuration values.
 type Service struct {
 	Type     reflect.Type
 	KeyValue nats.KeyValue
 	Cipher   *cipher.Cipher
 }
 
+// Fetch retrieves the current values from the NATS KeyValue store and decrypts them.
 func (x *Service) Fetch(v interface{}) (err error) {
 	var entry nats.KeyValueEntry
 	if entry, err = x.KeyValue.Get("values"); err != nil {
@@ -31,6 +33,8 @@ func (x *Service) Fetch(v interface{}) (err error) {
 	return
 }
 
+// Sync synchronizes the local values with the NATS KeyValue store.
+// It watches for updates and notifies the update channel.
 func (x *Service) Sync(v interface{}, update chan interface{}) (err error) {
 	if err = x.Fetch(v); err != nil {
 		return
@@ -57,6 +61,7 @@ func (x *Service) Sync(v interface{}, update chan interface{}) (err error) {
 	return
 }
 
+// Set updates multiple configuration values.
 func (x *Service) Set(update map[string]interface{}) (err error) {
 	var values map[string]interface{}
 	if err = x.Fetch(&values); err != nil {
@@ -68,6 +73,9 @@ func (x *Service) Set(update map[string]interface{}) (err error) {
 	return x.Update(values)
 }
 
+// Get retrieves specific configuration values by keys.
+// If no keys are provided, it returns all values.
+// It also masks secret values.
 func (x *Service) Get(keys ...string) (data map[string]interface{}, err error) {
 	if err = x.Fetch(&data); err != nil {
 		return
@@ -92,6 +100,7 @@ func (x *Service) Get(keys ...string) (data map[string]interface{}, err error) {
 	return
 }
 
+// Remove deletes configuration values by keys.
 func (x *Service) Remove(keys ...string) (err error) {
 	var values map[string]interface{}
 	if err = x.Fetch(&values); err != nil {
@@ -103,6 +112,7 @@ func (x *Service) Remove(keys ...string) (err error) {
 	return x.Update(values)
 }
 
+// Update encrypts and saves the configuration values to the NATS KeyValue store.
 func (x *Service) Update(data interface{}) (err error) {
 	var b []byte
 	if b, err = sonic.Marshal(data); err != nil {

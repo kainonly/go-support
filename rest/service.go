@@ -20,6 +20,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
+// Service provides the business logic for RESTful operations.
 type Service struct {
 	Mgo       *mongo.Client
 	Db        *mongo.Database
@@ -30,6 +31,7 @@ type Service struct {
 	Cipher    *cipher.Cipher
 }
 
+// IsForbid checks if the access to a collection is forbidden based on dynamic values.
 func (x *Service) IsForbid(name string) bool {
 	if x.Values.RestControls[name] == nil {
 		return true
@@ -48,6 +50,7 @@ const (
 	ActionSort       = 8
 )
 
+// Create inserts a single document into the specified collection.
 func (x *Service) Create(ctx context.Context, name string, doc interface{}) (result interface{}, err error) {
 	if result, err = x.Db.Collection(name).InsertOne(ctx, doc); err != nil {
 		return
@@ -62,6 +65,7 @@ func (x *Service) Create(ctx context.Context, name string, doc interface{}) (res
 	return
 }
 
+// BulkCreate inserts multiple documents into the specified collection.
 func (x *Service) BulkCreate(ctx context.Context, name string, docs []interface{}) (result interface{}, err error) {
 	if result, err = x.Db.Collection(name).InsertMany(ctx, docs); err != nil {
 		return
@@ -76,6 +80,8 @@ func (x *Service) BulkCreate(ctx context.Context, name string, docs []interface{
 	return
 }
 
+// Size returns the count of documents in the collection matching the filter.
+// If the filter is empty, it returns the estimated document count.
 func (x *Service) Size(ctx context.Context, name string, filter M) (_ int64, err error) {
 	if len(filter) == 0 {
 		return x.Db.Collection(name).EstimatedDocumentCount(ctx)
@@ -83,6 +89,8 @@ func (x *Service) Size(ctx context.Context, name string, filter M) (_ int64, err
 	return x.Db.Collection(name).CountDocuments(ctx, filter)
 }
 
+// Find retrieves documents from the collection matching the filter and options.
+// It also handles sensitive field masking.
 func (x *Service) Find(ctx context.Context, name string, filter M, option *options.FindOptions) (data []M, err error) {
 	var cursor *mongo.Cursor
 	if cursor, err = x.Db.Collection(name).Find(ctx, filter, option); err != nil {
@@ -100,6 +108,8 @@ func (x *Service) Find(ctx context.Context, name string, filter M, option *optio
 	return
 }
 
+// FindOne retrieves a single document from the collection matching the filter and options.
+// It also handles sensitive field masking.
 func (x *Service) FindOne(ctx context.Context, name string, filter M, option *options.FindOneOptions) (data M, err error) {
 	if err = x.Db.Collection(name).FindOne(ctx, filter, option).Decode(&data); err != nil {
 		return
@@ -108,6 +118,7 @@ func (x *Service) FindOne(ctx context.Context, name string, filter M, option *op
 	return
 }
 
+// Update updates multiple documents in the collection matching the filter.
 func (x *Service) Update(ctx context.Context, name string, filter M, update interface{}, option *options.UpdateOptions) (result interface{}, err error) {
 	if result, err = x.Db.Collection(name).UpdateMany(ctx, filter, update, option); err != nil {
 		return
@@ -123,6 +134,7 @@ func (x *Service) Update(ctx context.Context, name string, filter M, update inte
 	return
 }
 
+// UpdateById updates a single document in the collection by its ID.
 func (x *Service) UpdateById(ctx context.Context, name string, id primitive.ObjectID, update interface{}, option *options.UpdateOptions) (result interface{}, err error) {
 	filter := M{"_id": id}
 	if result, err = x.Db.Collection(name).UpdateOne(ctx, filter, update, option); err != nil {
@@ -139,6 +151,7 @@ func (x *Service) UpdateById(ctx context.Context, name string, id primitive.Obje
 	return
 }
 
+// Replace replaces a single document in the collection by its ID.
 func (x *Service) Replace(ctx context.Context, name string, id primitive.ObjectID, doc interface{}) (result interface{}, err error) {
 	filter := M{"_id": id}
 	if result, err = x.Db.Collection(name).ReplaceOne(ctx, filter, doc); err != nil {
@@ -155,6 +168,8 @@ func (x *Service) Replace(ctx context.Context, name string, id primitive.ObjectI
 	return
 }
 
+// Delete removes a single document from the collection by its ID.
+// If transaction is false, it fetches the document before deletion for event publishing.
 func (x *Service) Delete(ctx context.Context, name string, id primitive.ObjectID, transaction bool) (result interface{}, err error) {
 	filter := M{
 		"_id":      id,
@@ -183,6 +198,8 @@ func (x *Service) Delete(ctx context.Context, name string, id primitive.ObjectID
 	return
 }
 
+// BulkDelete removes multiple documents from the collection matching the filter.
+// If transaction is false, it fetches the documents before deletion for event publishing.
 func (x *Service) BulkDelete(ctx context.Context, name string, filter M, transaction bool) (result interface{}, err error) {
 	filter["_durable"] = bson.M{"$exists": false}
 	var docs []M
@@ -210,6 +227,7 @@ func (x *Service) BulkDelete(ctx context.Context, name string, filter M, transac
 	return
 }
 
+// Sort updates the order of documents based on a list of IDs.
 func (x *Service) Sort(ctx context.Context, name string, key string, ids []primitive.ObjectID) (result interface{}, err error) {
 	var wms []mongo.WriteModel
 	for i, id := range ids {
@@ -235,12 +253,14 @@ func (x *Service) Sort(ctx context.Context, name string, key string, ids []primi
 	return
 }
 
+// Transaction initializes a new transaction with a timeout.
 func (x *Service) Transaction(ctx context.Context, txn string) {
 	key := fmt.Sprintf(`transaction:%s`, txn)
 	x.RDb.LPush(ctx, key, time.Now().Format(time.RFC3339)).Val()
 	x.RDb.Expire(ctx, key, time.Hour*5).Val()
 }
 
+// PendingDto defines the structure for a pending action within a transaction.
 type PendingDto struct {
 	Action int                `bson:"action"`
 	Name   string             `bson:"name"`
@@ -249,6 +269,7 @@ type PendingDto struct {
 	Data   interface{}        `bson:"data,omitempty"`
 }
 
+// TxnNotExists checks if a transaction exists in Redis.
 func (x *Service) TxnNotExists(ctx context.Context, key string) (err error) {
 	var exists int64
 	if exists, err = x.RDb.Exists(ctx, key).Result(); err != nil {
@@ -260,6 +281,7 @@ func (x *Service) TxnNotExists(ctx context.Context, key string) (err error) {
 	return
 }
 
+// Pending adds an action to the pending list of a transaction.
 func (x *Service) Pending(ctx context.Context, txn string, dto PendingDto) (err error) {
 	key := fmt.Sprintf(`transaction:%s`, txn)
 	if err = x.TxnNotExists(ctx, key); err != nil {
@@ -275,6 +297,8 @@ func (x *Service) Pending(ctx context.Context, txn string, dto PendingDto) (err 
 	return
 }
 
+// Commit executes all pending actions in a transaction.
+// It uses a MongoDB session to ensure atomicity.
 func (x *Service) Commit(ctx context.Context, txn string) (_ interface{}, err error) {
 	key := fmt.Sprintf(`transaction:%s`, txn)
 	if err = x.TxnNotExists(ctx, key); err != nil {
@@ -324,6 +348,7 @@ func (x *Service) Commit(ctx context.Context, txn string) (_ interface{}, err er
 	}, txnOpts)
 }
 
+// Invoke executes a single pending action.
 func (x *Service) Invoke(ctx context.Context, dto PendingDto) (_ interface{}, _ error) {
 	switch dto.Action {
 	case ActionCreate:
@@ -361,6 +386,7 @@ func (x *Service) Invoke(ctx context.Context, dto PendingDto) (_ interface{}, _ 
 	return
 }
 
+// Transform processes the input data based on the provided rules.
 func (x *Service) Transform(data M, rules M) (err error) {
 	for key, value := range rules {
 		paths := strings.Split(key, "->")
@@ -371,6 +397,7 @@ func (x *Service) Transform(data M, rules M) (err error) {
 	return
 }
 
+// Pipe applies a transformation rule to a specific path in the data.
 func (x *Service) Pipe(input M, paths []string, kind interface{}) (err error) {
 	var cursor interface{} = input
 	n := len(paths) - 1
@@ -450,6 +477,7 @@ func (x *Service) Pipe(input M, paths []string, kind interface{}) (err error) {
 	return
 }
 
+// Projection creates a MongoDB projection based on the configured keys and request keys.
 func (x *Service) Projection(name string, keys []string) (result bson.M) {
 	result = make(bson.M)
 	if x.Values.RestControls != nil && x.Values.RestControls[name] != nil {
@@ -470,6 +498,7 @@ func (x *Service) Projection(name string, keys []string) (result bson.M) {
 	return
 }
 
+// Sensitive masks sensitive fields in the document.
 func (x *Service) Sensitive(name string, v M) {
 	if x.Values.RestControls != nil && x.Values.RestControls[name] != nil {
 		for _, key := range x.Values.RestControls[name].Sensitives {
@@ -482,6 +511,7 @@ func (x *Service) Sensitive(name string, v M) {
 	}
 }
 
+// PublishDto defines the data structure for publishing events.
 type PublishDto struct {
 	Action int         `json:"action"`
 	Id     string      `json:"id,omitempty"`
@@ -490,6 +520,7 @@ type PublishDto struct {
 	Result interface{} `json:"result"`
 }
 
+// Publish publishes an event to NATS JetStream if enabled.
 func (x *Service) Publish(ctx context.Context, name string, dto PublishDto) (err error) {
 	if v, ok := x.Values.RestControls[name]; ok {
 		if !v.Event {
