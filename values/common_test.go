@@ -43,6 +43,12 @@ var (
 )
 
 func TestMain(m *testing.M) {
+	if os.Getenv("NAMESPACE") == "" ||
+		os.Getenv("NATS_HOSTS") == "" ||
+		os.Getenv("NATS_NKEY") == "" ||
+		os.Getenv("KEY") == "" {
+		os.Exit(0)
+	}
 	var err error
 	namespace := os.Getenv("NAMESPACE")
 	if err = UseNats(namespace); err != nil {

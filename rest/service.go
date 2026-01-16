@@ -387,6 +387,13 @@ func (x *Service) Invoke(ctx context.Context, dto PendingDto) (_ interface{}, _ 
 }
 
 // Transform processes the input data based on the provided rules.
+//
+// Rules are passed by controllers as xdata / xfilter and use a simple path expression:
+//   - key: "field->subfield->..." (use "$" to iterate array items when the current value is []object)
+//   - value: conversion kind (see Pipe)
+//
+// Example (filter conversion):
+//   {"_id->$in":"oids"} converts filter._id.$in from []string to []ObjectID
 func (x *Service) Transform(data M, rules M) (err error) {
 	for key, value := range rules {
 		paths := strings.Split(key, "->")
@@ -398,6 +405,13 @@ func (x *Service) Transform(data M, rules M) (err error) {
 }
 
 // Pipe applies a transformation rule to a specific path in the data.
+//
+// Supported kinds:
+//   - oid / oids: ObjectID / []ObjectID (hex string(s) -> ObjectID)
+//   - date / dates: RFC1123 string(s) -> time.Time
+//   - timestamp / timestamps: RFC3339 string(s) -> time.Time
+//   - password: hashes a plaintext password
+//   - cipher: encrypts a plaintext string via Service.Cipher
 func (x *Service) Pipe(input M, paths []string, kind interface{}) (err error) {
 	var cursor interface{} = input
 	n := len(paths) - 1

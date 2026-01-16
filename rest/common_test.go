@@ -77,6 +77,13 @@ var controls = map[string]*values.RestControl{
 }
 
 func TestMain(m *testing.M) {
+	if os.Getenv("DATABASE_URL") == "" ||
+		os.Getenv("DATABASE_NAME") == "" ||
+		os.Getenv("DATABASE_REDIS") == "" ||
+		os.Getenv("NATS_HOSTS") == "" ||
+		os.Getenv("NATS_NKEY") == "" {
+		os.Exit(0)
+	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 	if err := UseMongo(ctx); err != nil {

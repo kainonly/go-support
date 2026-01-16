@@ -20,16 +20,29 @@ type Controller struct {
 	*Service
 }
 
-// CreateDto defines the data structure for creating a document.
+// CreateDto defines the request body for creating a single document.
+//
+// Equivalent to:
+//
+//	POST /db/:collection/create
+//
+// collection: lowercase letters and underscores allowed.
+//
+// xdata is an optional format conversion map applied to data before insert.
+// See Package rest for details and supported conversion kinds.
 type CreateDto struct {
 	Collection string `path:"collection" vd:"snake"`
 	Data       M      `json:"data" vd:"gt=0"`
-	Xdata      M      `json:"xdata，omitempty"`
-	Txn        string `json:"txn，omitempty" vd:"omitempty,uuid"`
+	Xdata      M      `json:"xdata,omitempty"`
+	Txn        string `json:"txn,omitempty" vd:"omitempty,uuid"`
 }
 
 // Create handles the creation of a single document.
 // It supports transactions if a txn ID is provided.
+//
+// Response:
+//   - 201: MongoDB insert result (includes InsertedID)
+//   - 204: when txn is provided, the action is staged for Commit
 func (x *Controller) Create(ctx context.Context, c *app.RequestContext) {
 	var dto CreateDto
 	if err := c.BindAndValidate(&dto); err != nil {
@@ -72,7 +85,15 @@ func (x *Controller) Create(ctx context.Context, c *app.RequestContext) {
 	c.JSON(201, r)
 }
 
-// BulkCreateDto defines the data structure for creating multiple documents.
+// BulkCreateDto defines the request body for creating multiple documents in a batch.
+//
+// Equivalent to:
+//
+//	POST /db/:collection/bulk_create
+//
+// collection: lowercase letters and underscores allowed.
+//
+// xdata is applied to each item in data before insert.
 type BulkCreateDto struct {
 	Collection string `path:"collection" vd:"snake"`
 	Data       []M    `json:"data" vd:"gt=0"`
@@ -82,6 +103,10 @@ type BulkCreateDto struct {
 
 // BulkCreate handles the creation of multiple documents in a batch.
 // It supports transactions if a txn ID is provided.
+//
+// Response:
+//   - 201: MongoDB bulk insert result (includes InsertedIDs)
+//   - 204: when txn is provided, the action is staged for Commit
 func (x *Controller) BulkCreate(ctx context.Context, c *app.RequestContext) {
 	var dto BulkCreateDto
 	if err := c.BindAndValidate(&dto); err != nil {
@@ -128,7 +153,15 @@ func (x *Controller) BulkCreate(ctx context.Context, c *app.RequestContext) {
 	c.JSON(201, r)
 }
 
-// SizeDto defines the data structure for counting documents.
+// SizeDto defines the request body for counting documents.
+//
+// Equivalent to:
+//
+//	POST /db/:collection/size
+//
+// collection: lowercase letters and underscores allowed.
+//
+// xfilter is an optional format conversion map applied to filter before counting.
 type SizeDto struct {
 	Collection string `path:"collection" vd:"snake"`
 	Filter     M      `json:"filter" vd:"required"`
@@ -136,6 +169,9 @@ type SizeDto struct {
 }
 
 // Size returns the count of documents matching the filter.
+//
+// Response:
+//   - 204 with header x-total (total matched documents)
 func (x *Controller) Size(ctx context.Context, c *app.RequestContext) {
 	var dto SizeDto
 	if err := c.BindAndValidate(&dto); err != nil {
@@ -163,7 +199,22 @@ func (x *Controller) Size(ctx context.Context, c *app.RequestContext) {
 	c.Status(204)
 }
 
-// FindDto defines the data structure for querying documents.
+// FindDto defines the request body and query/header parameters for querying documents.
+//
+// Equivalent to:
+//
+//	POST /db/:collection/find
+//
+// collection: lowercase letters and underscores allowed.
+//
+// Request:
+//   - Headers: x-pagesize (default 100, max 1000), x-page (default 1)
+//   - Query: sort=<field>:<1|-1>, keys=<field>&keys=<field>
+//   - Body: filter + optional xfilter conversion map
+//
+// Response:
+//   - Header: x-total (total matched documents)
+//   - Body: []object
 type FindDto struct {
 	Collection string   `path:"collection" vd:"snake"`
 	Pagesize   int64    `header:"x-pagesize" vd:"omitempty,min=0,max=1000"`
@@ -176,6 +227,9 @@ type FindDto struct {
 
 // Find retrieves a list of documents matching the filter.
 // It supports pagination, sorting, and field selection.
+//
+// Response:
+//   - 200 with header x-total and body []object
 func (x *Controller) Find(ctx context.Context, c *app.RequestContext) {
 	var dto FindDto
 	if err := c.BindAndValidate(&dto); err != nil {

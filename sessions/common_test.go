@@ -42,6 +42,9 @@ var DEFAULT = values.DynamicValues{
 var v = DEFAULT
 
 func TestMain(m *testing.M) {
+	if os.Getenv("DATABASE_REDIS") == "" {
+		os.Exit(0)
+	}
 	if err := UseRedis(); err != nil {
 		log.Fatalln(err)
 	}

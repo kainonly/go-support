@@ -1,3 +1,24 @@
+// Package rest implements a generic MongoDB REST layer.
+//
+// It is designed to expose common collection operations (create, query, update, delete, sort)
+// through a thin Hertz controller and a MongoDB-backed service.
+//
+// # Data format conversion
+//
+// Many endpoints accept an optional transformation map (xdata / xfilter). The map key uses a
+// "path" syntax joined by "->", and the value indicates the conversion kind. Examples:
+//   - {"_id->$in":"oids"} converts a string array in filter._id.$in to ObjectID array
+//   - {"pd":"timestamp","valid":"timestamps"} converts RFC3339 strings to time.Time / []time.Time
+//
+// Supported conversion kinds are implemented in Service.Pipe: oid, oids, date, dates, timestamp,
+// timestamps, password, cipher.
+//
+// # Transactions
+//
+// Some write endpoints can be executed within a transaction workflow:
+//  1. start: Transaction() returns a txn id
+//  2. queue: pass txn to write APIs to stage actions (HTTP 204)
+//  3. commit: Commit() executes staged actions using a MongoDB session transaction
 package rest
 
 import (
